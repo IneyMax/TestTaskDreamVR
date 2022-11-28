@@ -33,4 +33,8 @@ struct STRUCTCONVERTER_API FStruct1
 	/**  */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	ETestEnum TestEnum;
+
+	/**  */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FVector TestVector;
 };

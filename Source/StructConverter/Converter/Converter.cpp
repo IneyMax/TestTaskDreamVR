@@ -17,10 +17,10 @@ TMap<FString, FString> UConverter::ConvertFStruct1ToMap(FStruct1 TestStruct)
 		ReturnMap.Add(FString::FromInt(k), FString::FromInt(l));
 		*/
 
-		//FString PropertyClassName;
+		FString PropertyClassName;
 		//PropertyClassName.Append(PropIt->GetClass()->GetName());
-		//PropertyClassName.Append(PropIt->GetCPPType());
-		//ReturnMap.Add(PropIt->GetName(), PropertyClassName);
+		PropertyClassName.Append(PropIt->GetCPPType());
+		ReturnMap.Add(PropIt->GetName(), PropertyClassName);
 		
 		if (PropIt->GetCPPType() == "float")
 		{
@@ -50,6 +50,12 @@ TMap<FString, FString> UConverter::ConvertFStruct1ToMap(FStruct1 TestStruct)
 		{
 			uint8 *i = (uint8*)((char*)&TestStruct + PropIt->GetOffset_ForInternal() / sizeof(char));
 			ReturnMap.Add(PropIt->GetName(), FString::FromInt(*i));
+		}
+
+		if (PropIt->GetCPPType() == "FVector")
+		{
+			FVector *i = (FVector*)((char*)&TestStruct + PropIt->GetOffset_ForInternal() / sizeof(char));
+			ReturnMap.Add(PropIt->GetName(), i->ToString());
 		}
 	}
 	
@@ -90,6 +96,14 @@ FStruct1 UConverter::ConvertMapToFStruct1(TMap<FString, FString> ConvertedMap)
 		{
 			uint8 *i = (uint8*)((char*)&ReturnStruct + PropIt->GetOffset_ForInternal() / sizeof(char));
 			*i = FCString::Atoi(*FindValue);
+		}
+
+		if (PropIt->GetCPPType() == "FVector")
+		{
+			FVector *i = (FVector*)((char*)&ReturnStruct + PropIt->GetOffset_ForInternal() / sizeof(char));
+			FVector ResultVector;
+			ResultVector.InitFromString(*FindValue);
+			*i = ResultVector;
 		}
 	}
 	return ReturnStruct;
